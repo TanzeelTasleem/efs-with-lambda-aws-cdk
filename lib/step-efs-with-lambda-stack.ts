@@ -10,20 +10,20 @@ export class StepEfsWithLambdaStack extends cdk.Stack {
     super(scope, id, props);
 
     const myVpc = new ec2.Vpc(this, "Vpc", {
-      maxAzs: 2, // Default is all AZs in the region
+      maxAzs: 2,
     });
 
     const fileSystem = new efs.FileSystem(this, "lambdaEfsFileSystem", {
-      vpc: myVpc,
+      vpc: myVpc
     });
 
     const accessPoint = fileSystem.addAccessPoint("AccessPoint", {
-      createAcl: {
+      createAcl:{
         ownerGid: "1001",
         ownerUid: "1001",
         permissions: "750",
       },
-      path: "/export/lambda",
+      path:"/export/lambda",
       posixUser:{
         gid: "1001",
         uid: "1001",
@@ -38,7 +38,7 @@ export class StepEfsWithLambdaStack extends cdk.Stack {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(accessPoint,"/mnt/msg"),
     });
 
-    let api = new apigw.HttpApi(this, "Endpoint", {
+    const api = new apigw.HttpApi(this, "Endpoint", {
       defaultIntegration: new integrations.LambdaProxyIntegration({
         handler: efsLambda,
       }),

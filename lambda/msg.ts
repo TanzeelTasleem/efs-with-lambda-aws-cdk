@@ -26,6 +26,7 @@ const createMessage = async (message: string) => {
     console.log("error in creating msg", error);
   }
 };
+
 const getMessages = async () => {
   try {
     return await fs.readFile(MSG_FILE_PATH, "utf8");
