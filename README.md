@@ -15,12 +15,12 @@ Amazon EFS is a fully managed, elastic, shared file system designed to be consum
 ### Step 1 (Create An EFS File System)
 
 `const myVpc = new ec2.Vpc(this, "Vpc", {
-maxAzs: 2,
+    maxAzs: 2,
 });
-
 const fileSystem = new efs.FileSystem(this, "lambdaEfsFileSystem", {
-vpc: myVpc
-});`
+    vpc: myVpc
+});
+`
 Amazon Virtual Private Cloud (Amazon VPC) is a service that lets you launch AWS resources in a logically isolated virtual network that you define. You have complete control over your virtual networking environment, including selection of your own IP address range, creation of subnets, and configuration of route tables and network gateways.
 
 A Virtual Private Cloud (VPC) is required to create an Amazon EFS file system.
