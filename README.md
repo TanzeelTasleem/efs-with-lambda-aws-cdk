@@ -16,59 +16,63 @@ Amazon EFS is a fully managed, elastic, shared file system designed to be consum
 
 ### Step 1 (Create An EFS File System)
 
-`   const myVpc = new ec2.Vpc(this, "Vpc", {
-      maxAzs: 2,
-    });
-    const fileSystem = new efs.FileSystem(this, "lambdaEfsFileSystem", {
-      vpc: myVpc
-    });
-`
+```typescript
+const myVpc = new ec2.Vpc(this, "Vpc", {
+  maxAzs: 2,
+});
+const fileSystem = new efs.FileSystem(this, "lambdaEfsFileSystem", {
+  vpc: myVpc,
+});
+```
 
 Amazon Virtual Private Cloud (Amazon VPC) is a service that lets you launch AWS resources in a logically isolated virtual network that you define. You have complete control over your virtual networking environment, including selection of your own IP address range, creation of subnets, and configuration of route tables and network gateways.
 
 A Virtual Private Cloud (VPC) is required to create an Amazon EFS file system.
 
 ### Step 2 (Creating An Access Ponit)
-`
-    const accessPoint = fileSystem.addAccessPoint("AccessPoint", {
-      createAcl:{
-        ownerGid: "1001",
-        ownerUid: "1001",
-        permissions: "750",
-      },
-      path:"/export/lambda",
-      posixUser:{
-        gid: "1001",
-        uid: "1001",
-      },
-    });
-`
+
+```typescript
+const accessPoint = fileSystem.addAccessPoint("AccessPoint", {
+  createAcl: {
+    ownerGid: "1001",
+    ownerUid: "1001",
+    permissions: "750",
+  },
+  path: "/export/lambda",
+  posixUser: {
+    gid: "1001",
+    uid: "1001",
+  },
+});
+```
 
 Amazon EFS access points are application-specific entry points into an EFS file system that make it easier to manage application access to shared datasets. Access points can enforce a user identity, including the user's POSIX groups, for all file system requests that are made through the access point. Access points can also enforce a different root directory for the file system so that clients can only access data in the specified directory or its subdirectories.
 
 ### Step 3 (Creating a Lambda Function)
-`
-    const efsLambda = new lambda.Function(this, "efsLambdaFunction", {
-      runtime: lambda.Runtime.NODEJS_12_X,
-      code: lambda.Code.fromAsset("lambda"),
-      handler: "msg.handler",
-      vpc: myVpc,
-      filesystem: lambda.FileSystem.fromEfsAccessPoint(accessPoint,"/mnt/msg"),
-    });
-`
+
+```typescript
+const efsLambda = new lambda.Function(this, "efsLambdaFunction", {
+  runtime: lambda.Runtime.NODEJS_12_X,
+  code: lambda.Code.fromAsset("lambda"),
+  handler: "msg.handler",
+  vpc: myVpc,
+  filesystem: lambda.FileSystem.fromEfsAccessPoint(accessPoint, "/mnt/msg"),
+});
+```
 
 You can configure a function to mount an Amazon Elastic File System (Amazon EFS) to a directory in your runtime environment with the filesystem property. To access Amazon EFS from lambda function, the Amazon EFS access point will be required.
 
 This sample allows the lambda function to mount the Amazon EFS access point to /mnt/msg in the runtime environment and access the filesystem with the POSIX identity defined in posixUser.
 
 ### Step 4 (Creating an API)
-`
-    const api = new apigw.HttpApi(this, "Endpoint", {
-      defaultIntegration: new integrations.LambdaProxyIntegration({
-        handler: efsLambda,
-      }),
-    });
-`
+
+```typescript
+const api = new apigw.HttpApi(this, "Endpoint", {
+  defaultIntegration: new integrations.LambdaProxyIntegration({
+    handler: efsLambda,
+  }),
+});
+```
 
 Lambda integrations enable integrating an HTTP API route with a Lambda function. When a client invokes the route, the API Gateway service forwards the request to the Lambda function and returns the function's response to the client.
 
