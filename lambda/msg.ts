@@ -13,6 +13,7 @@ exports.handler = async (event: any) => {
     return sendRes(200, await getMessages());
   } else if (method === "DELETE") {
     await deleteMessages();
+    sendRes(200, "messages deleted");
     return sendRes(200, await getMessages());
   } else {
     return sendRes(200, "Method unsupported");
