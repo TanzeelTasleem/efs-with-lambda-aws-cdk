@@ -100,9 +100,9 @@ exports.handler = async (event: any) => {
 };
 ```
 
-In this lambda function, fs(file System) library from nodejs is used to interact with EFS . We didn't use any AWS-SDKs to interact with EfS because in Step 3 we mount the function local Storage with EFS.
+In this lambda function, fs(file System) library from nodejs is used to interact with EFS . We didn't use any AWS-SDKs to interact with EFS because in Step 3 we mount the function local Storage with EFS.
 
-In the handler, we don't have a route for every method so, we just destructure the request method from the event and doing some cases depending on the method. When (GET) request is made from an API gateway we call (getMessage) function whose responsibility is to get all the messages from file . If we have a (POST) request we add a new message in a file that is coming in the event body then display all the messages and if we get (DELETE) request we delete all the messages.
+In the handler, we don't have a route for every method so, we just destructure the (HTTP) request method from the event and doing some cases depending on the method. When (GET) request is made from an API gateway we call (getMessage) function whose responsibility is to get all the messages from file . If we have a (POST) request we add a new message in a file that is coming in the event body then display all the messages and if we get (DELETE) request we delete all the messages.
 
 ```typescript
 const createMessage = async (message: string) => {
@@ -141,7 +141,7 @@ const deleteMessages = async () => {
 
 This function Asynchronously removes a file
 
-#### Step 4 (Creating an API)
+#### Step 5 (Creating an API)
 
 ```typescript
 const api = new apigw.HttpApi(this, "Endpoint", {
